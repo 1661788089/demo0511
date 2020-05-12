@@ -1,6 +1,6 @@
 FROM openjdk:8-slim
 
-VOLUME /tmp
+VOLUME /workspace
 
 RUN mkdir -p /data/docker_files
 
