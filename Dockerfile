@@ -1,25 +1,8 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-slim
 
-#ARG MAVEN_VERSION=3.6.3
-ARG USER_HOME_DIR="/root"
-ARG SHA=c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0
-ARG BASE_URL=http://maven.oschina.net/content/groups/public/
+VOLUME /workspace
 
-RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
-  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
-  && echo "${SHA}  /tmp/apache-maven.tar.gz" | sha512sum -c - \
-  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
-  && rm -f /tmp/apache-maven.tar.gz \
-  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+RUN mkdir -p /data/docker_files
 
-ENV MAVEN_HOME /usr/share/maven
-ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
-
-COPY mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
-COPY settings-docker.xml /usr/share/maven/ref/
-
-ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
-CMD ["mvn"]
-#
-#ADD demo-0.0.1-SNAPSHOT.jar app.jar
-#ENTRYPOINT eval exec "java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=$REGISTRY_PROFILE $OPTS -jar /app.jar"
+ADD helloworld-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT eval exec "java -Djava.security.egd=file:/dev/./urandom -Dspring.profiles.active=$REGISTRY_PROFILE $OPTS -jar /app.jar"
